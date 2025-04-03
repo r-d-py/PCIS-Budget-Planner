@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Planner</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        input { width: 100%; border: none; background: transparent; }
+        .bold-row { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>Typical Expenses</h2>
+    <table id="typicalExpenses">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Amount ($)</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        <tfoot>
+            <tr class="bold-row">
+                <td><strong>Total Typical Expenses:</strong></td>
+                <td><strong>$1874.00</strong></td>
+            </tr>
+        </tfoot>
+    </table>
+    
+    <h2>Your Monthly Expenses</h2>
+    <table id="userExpenses">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Amount ($)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>Rent or dorm fee</td><td><input type='number' value='0' oninput='calculateBreakdown()'></td></tr>
+            <tr><td>Groceries</td><td><input type='number' value='0' oninput='calculateBreakdown()'></td></tr>
+            <tr><td>Loan Repayments</td><td><input type='number' value='0' oninput='calculateBreakdown()'></td></tr>
+            <tr><td>Car loan payment</td><td><input type='number' value='0' oninput='calculateBreakdown()'></td></tr>
+            <tr><td>Entertainment</td><td><input type='number' value='0' oninput='calculateBreakdown()'></td></tr>
+            <tr><td>Transportation</td><td><input type='number' value='0' oninput='calculateBreakdown()'></td></tr>
+            <tr><td>Textbooks and other class supplies</td><td><input type='number' value='0' oninput='calculateBreakdown()'></td></tr>
+            <tr><td>Cell phone</td><td><input type='number' value='0' oninput='calculateBreakdown()'></td></tr>
+            <tr><td>Cable and Internet</td><td><input type='number' value='0' oninput='calculateBreakdown()'></td></tr>
+            <tr><td>Car insurance</td><td><input type='number' value='0' oninput='calculateBreakdown()'></td></tr>
+            <tr><td>Savings</td><td><input type='number' value='0' oninput='calculateBreakdown()'></td></tr>
+            <tr><td>Dining Out</td><td><input type='number' value='0' oninput='calculateBreakdown()'></td></tr>
+            <tr><td>Clothing</td><td><input type='number' value='0' oninput='calculateBreakdown()'></td></tr>
+            <tr><td>Car maintenance and repairs</td><td><input type='number' value='0' oninput='calculateBreakdown()'></td></tr>
+            <tr><td>Medical</td><td><input type='number' value='0' oninput='calculateBreakdown()'></td></tr>
+            <tr><td>Electricity</td><td><input type='number' value='0' oninput='calculateBreakdown()'></td></tr>
+            <tr><td>Credit card monthly payment</td><td><input type='number' value='0' oninput='calculateBreakdown()'></td></tr>
+            <tr><td>Gas and water</td><td><input type='number' value='0' oninput='calculateBreakdown()'></td></tr>
+            <tr><td>Parking fee</td><td><input type='number' value='0' oninput='calculateBreakdown()'></td></tr>
+        </tbody>
+        <tfoot>
+            <tr class="bold-row">
+                <td><strong>Total Spent</strong></td>
+                <td id="totalSpent">$0.00</td>
+            </tr>
+        </tfoot>
+    </table>
+    
+    <h2>Spending Breakdown</h2>
+    <label for="income">Enter Your Monthly Income: </label>
+    <input type="number" id="income" placeholder="Enter income" oninput="calculateBreakdown()">
+    <table id="spendingBreakdown">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Percentage of Income (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    
+    <script>
+        async function loadBudgetData() {
+            const response = await fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vSaejQhcpj4E1LXJV96LTRv7dCL0mPJNTyuCIMnrtZqv-atnGow-gF5payX2c11S5lltHbefgD--IjW/pub?output=csv');
+            const data = await response.text();
+            const rows = data.split('\n').map(row => row.split(','));
+            
+            const typicalBody = document.querySelector('#typicalExpenses tbody');
+            typicalBody.innerHTML = '';
+            
+            rows.slice(1).forEach((row, index, array) => {
+                const category = row[0];
+                const amount = parseFloat(row[1]) || 0;
+                if (category) {
+                    typicalBody.innerHTML += `<tr><td>${category}</td><td>$${amount.toFixed(2)}</td></tr>`;
+                }
+            });
+        }
+        
+        loadBudgetData();
+    </script>
+</body>
+</html>
